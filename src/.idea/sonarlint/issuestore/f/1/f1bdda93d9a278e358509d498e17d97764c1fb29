@@ -1,0 +1,8 @@
+
+upython:S101"RRename class "nintendoWatch" to match the regular expression ^[A-Z_][a-zA-Z0-9]+$.(ÿÓÙ²ýÿÿÿÿ8º’¾·².
+qpython:S116"PRename this field "storeBtn" to match the regular expression ^[_a-z][_a-z0-9]*$.(¼‡ÿÒúÿÿÿÿ8‰Üò·².
+jpython:S116"NRename this field "zipBtn" to match the regular expression ^[_a-z][_a-z0-9]*$.(¼©Ýû8¹½Ë·².
+qpython:S116"PRename this field "zipInput" to match the regular expression ^[_a-z][_a-z0-9]*$.(¯åÒÈùÿÿÿÿ8¹Œî·².
+ppython:S116"ORename this field "lookBtn" to match the regular expression ^[_a-z][_a-z0-9]*$.(íëÂ¼úÿÿÿÿ8Žªî·².
+qpython:S100"NRename method "bestBuy" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(ý·Ù‹þÿÿÿÿ8Š«ªº².
+kpython:S116"MRename this field "bbBtn" to match the regular expression ^[_a-z][_a-z0-9]*$.(ù®™ƒ8æÏµº².
