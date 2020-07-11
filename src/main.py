@@ -10,14 +10,19 @@ class nintendoWatch:
         sleep(2)
 
 
-def send_msg(message):
+def send_msg(message,stores, place):
     account_sid = 'ACf46189a9ceca2b697f802f912661f127'
     auth_token = 'd294e42e19c2fedc65a006946efe8fa7'
     client = Client(account_sid, auth_token)
+    store_msg = place + ", " + message + "\n"
+
+    if len(stores) != 0:
+        for x in stores:
+            store_msg += x['store_name'] + ": " + x['miles'] + "\n"
 
     message = client.messages \
         .create(
-        body=message,
+        body=store_msg,
         from_='+12029521329',
         to='+14147952004'
     )
@@ -36,6 +41,7 @@ def check_bestBuy(self):
 
 
 def check_target(self):
+    ret_list = []
     self.driver.get("https://www.target.com/p/nintendo-switch-with-neon-blue-and-neon-red-joy-con/-/A-77464001")
     sleep(3)
     self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']")\
@@ -56,13 +62,29 @@ def check_target(self):
     self.driver.find_element_by_class_name('switch-track')\
         .click()
     sleep(1)
-    first_location = self.driver.find_element_by_xpath("//div[@data-test='storeAvailabilityStoreCard']/div/h3/span[2]")
-    text = first_location.text.split()
+    locations = self.driver.find_elements_by_xpath("//div[@data-test='storeAvailabilityStoreCard']")
 
-    if int(text[0]) > 20:
-        send_msg("Sold out at Target")
+    for loc in locations:
+        text = str.splitlines(loc.text)
+        if int(text[1].split()[0]) < 20:
+            entry = {
+                'store_name': text[0],
+                'miles': text[1]
+            }
+            ret_list.append(entry)
+
+    if len(ret_list) > 0:
+        send_msg("In Stock at these locations", ret_list, "Target")
     else:
-        send_msg("In Stock! A store in 20 miles has one")
+        send_msg("Sold out at Target, closest store is not within 20 miles", [], "Target")
+
+    # if int(text[1]) > 20:
+    #     send_msg("Sold out at Target, closest store is " + text[2] + " miles away", [])
+    # else:
+    #     for loc in locations:
+    #         text = loc.text.split()
+    #         if
+    #     send_msg("In Stock! A store in 20 miles has one")
 
 
 
