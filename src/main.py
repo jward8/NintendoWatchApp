@@ -1,5 +1,6 @@
 from time import sleep
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from twilio.rest import Client
 
 
@@ -7,22 +8,6 @@ class nintendoWatch:
     def __init__(self):
         self.driver = webdriver.Chrome('C:\\Users\\JackMichael\\Documents\\Coding\\NintendoWatchApp\\src\\chromedriver')
         sleep(2)
-
-        # self.zipBtn = self.driver.find_element_by_id("storeId-utilityNavBtn")
-        # self.zipBtn.click()
-        # sleep(5)
-        #
-        # # input madison area code and submit
-        # self.zipInput = self.driver.find_element_by_id("zipOrCityState")\
-        #     .send_keys("53715")
-        # self.lookBtn = self.driver.find_element_by_xpath("//button[@data-test='storeLocationSearch-button']")\
-        #     .click()
-        #
-        # sleep(4)
-        #
-        # #select Madison East as store
-        # self.storeBtn = self.driver.find_element_by_xpath("//div[@data-test='storeIdSearch-item-2106']/button")\
-        #     .click()
 
 
 def send_msg(message):
@@ -38,7 +23,7 @@ def send_msg(message):
     )
 
 
-def bestBuy(self):
+def check_bestBuy(self):
     self.driver.get(
         "https://www.bestbuy.com/site/nintendo-switch-32gb-console-neon-red-neon-blue-joy-con/6364255.p?skuId=6364255")
     best_btn = self.driver.find_element_by_xpath("//div[@class='fulfillment-add-to-cart-button']/div/button")
@@ -50,5 +35,36 @@ def bestBuy(self):
         send_msg("In Stock! Buy Soon!")
 
 
+def check_target(self):
+    self.driver.get("https://www.target.com/p/nintendo-switch-with-neon-blue-and-neon-red-joy-con/-/A-77464001")
+    sleep(3)
+    self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']")\
+        .click()
+    sleep(1)
+    self.driver.find_element_by_xpath("//a[@class='Link-sc-1khjl8b-0 bTKAgl']")\
+        .click()
+    sleep(2)
+
+    #sets the location
+    self.driver.find_element_by_xpath("//input[@id='storeSearch']").click()
+    self.driver.find_element_by_xpath("//input[@id='storeSearch']").send_keys(Keys.CONTROL + "a")
+    self.driver.find_element_by_xpath("//input[@id='storeSearch']").send_keys("53715")
+
+    self.driver.find_element_by_xpath("//button[@data-test='fiatsUpdateLocationSubmitButton']")\
+        .click()
+    sleep(1)
+    self.driver.find_element_by_class_name('switch-track')\
+        .click()
+    sleep(1)
+    first_location = self.driver.find_element_by_xpath("//div[@data-test='storeAvailabilityStoreCard']/div/h3/span[2]")
+    text = first_location.text.split()
+
+    if int(text[0]) > 20:
+        send_msg("Sold out at Target")
+    else:
+        send_msg("In Stock! A store in 20 miles has one")
+
+
+
 checker = nintendoWatch()
-bestBuy(checker)
+check_target(checker)
