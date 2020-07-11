@@ -1,3 +1,8 @@
 
-mpython:S1542'"PRename function "bestBuy" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(ı·Ù‹şÿÿÿÿ
-npython:S101"RRename class "nintendoWatch" to match the regular expression ^[A-Z_][a-zA-Z0-9]+$.(ÿÓÙ²ıÿÿÿÿ
+fpython:S930&"CAdd 2 missing arguments; 'send_msg' expects 3 positional arguments.(‚ñŠùÿÿÿÿ8úÖ„ó³.
+=python:S125Q"Remove this commented out code.(­Ôš 8è‚§ó³.
+upython:S1542"VRename function "check_bestBuy" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(›¶şå8¶¸ûŞ².
+`python:S930("CAdd 2 missing arguments; 'send_msg' expects 3 positional arguments.(…»8è‚§ó³.
+zpython:S11927"[Define a constant instead of duplicating this literal "//input[@id='storeSearch']" 3 times.(¨–ø8õñòğ³.
+kpython:S1854"LRemove this assignment to local variable 'message'; the value is never used.(âµÃƒ8èù’ô³.
+npython:S101"RRename class "nintendoWatch" to match the regular expression ^[A-Z_][a-zA-Z0-9]+$.(ÿÓÙ²ıÿÿÿÿ
