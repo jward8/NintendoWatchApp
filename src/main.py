@@ -45,7 +45,7 @@ def check_target(self):
     self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']") \
         .click()
     sleep(1)
-    self.driver.find_element_by_xpath("//a[@class='Link-sc-1khjl8b-0 bTKAgl']") \
+    self.driver.find_element_by_xpath("//a[@data-test='storeSearchLink']") \
         .click()
     sleep(2)
 
