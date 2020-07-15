@@ -23,75 +23,113 @@ def send_msg(message):
     )
 
 
-def check_bestBuy(self):
-    self.driver.get(
-        "https://www.bestbuy.com/site/nintendo-switch-32gb-console-neon-red-neon-blue-joy-con/6364255.p?skuId=6364255")
-    best_btn = self.driver.find_element_by_xpath("//div[@class='fulfillment-add-to-cart-button']/div/button")
+def check_bestBuy(self,switch_best):
 
-    if best_btn.text == 'Sold Out':
-        return False
-    else:
-        store_pickup = self.driver.find_element_by_xpath(
-            "//*[@id='fulfillment-fulfillment-summary-4c1e0ec7-88db-44f0-b3c8-9940cd592454']/div/div/div/div/div[2]/div/span")
-        if "unavailable" in store_pickup.text:
-            return False
-        return True
+    for x in range(2):
+        self.driver.get(switch_best['url'][x])
+        best_btn = self.driver.find_element_by_xpath("//div[@class='fulfillment-add-to-cart-button']/div/button")
+
+        if best_btn.text == 'Sold Out':
+            continue
+        else:
+            store_pickup = self.driver.find_element_by_xpath(
+                "//*[@id='fulfillment-fulfillment-summary-4c1e0ec7-88db-44f0-b3c8-9940cd592454']/div/div/div/div/div[2]/div/span")
+            if "unavailable" in store_pickup.text:
+                continue
+            switch_best['availability'][x] = True
+    return switch_best
 
 
-def check_target(self):
-    ret_list = []
-    self.driver.get("https://www.target.com/p/nintendo-switch-with-neon-blue-and-neon-red-joy-con/-/A-77464001")
-    sleep(3)
-    self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']") \
-        .click()
-    sleep(1)
-    self.driver.find_element_by_xpath("//a[@data-test='storeSearchLink']") \
-        .click()
-    sleep(2)
+def check_target(self, switch_target):
 
-    # sets the location
-    input_location = "//input[@id='storeSearch']"
-    self.driver.find_element_by_xpath(input_location).click()
-    self.driver.find_element_by_xpath(input_location).send_keys(Keys.CONTROL + "a")
-    self.driver.find_element_by_xpath(input_location).send_keys("53715")
+    for x in range(2):
+        self.driver.get(switch_target["url"][x])
+        sleep(3)
+        switch_location = self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']")
+        self.driver.execute_script("arguments[0].click()", switch_location)
+        sleep(1)
+        self.driver.find_element_by_xpath("//a[@data-test='storeSearchLink']") \
+            .click()
+        sleep(2)
 
-    self.driver.find_element_by_xpath("//button[@data-test='fiatsUpdateLocationSubmitButton']") \
-        .click()
-    sleep(1)
-    self.driver.find_element_by_class_name('switch-track') \
-        .click()
-    sleep(1)
-    locations = self.driver.find_elements_by_xpath("//div[@data-test='storeAvailabilityStoreCard']")
+        # sets the location
+        input_location = "//input[@id='storeSearch']"
+        self.driver.find_element_by_xpath(input_location).click()
+        self.driver.find_element_by_xpath(input_location).send_keys(Keys.CONTROL + "a")
+        self.driver.find_element_by_xpath(input_location).send_keys("53715")
 
-    for loc in locations:
-        text = str.splitlines(loc.text)
-        if int(text[1].split()[0]) < 20:
-            entry = {
-                'store_name': text[0],
-                'miles': text[1]
-            }
-            ret_list.append(entry)
+        self.driver.find_element_by_xpath("//button[@data-test='fiatsUpdateLocationSubmitButton']")\
+            .click()
+        sleep(1)
+        self.driver.find_element_by_class_name('switch-track') \
+            .click()
+        sleep(1)
+        locations = self.driver.find_elements_by_xpath("//div[@data-test='storeAvailabilityStoreCard']")
 
-    return ret_list
+        for loc in locations:
+            text = str.splitlines(loc.text)
+            if int(text[1].split()[0]) < 20:
+                entry = {
+                    'store_name': text[0],
+                    'miles': text[1]
+                }
+                switch_target['locations'][x].append(entry)
+
+    return switch_target
 
 
 def summarize(self):
-    at_bestBuy = check_bestBuy(self)
-    target_list = check_target(self)
-    at_target = len(target_list) > 0
-
+    switch_avail = [
+        {
+            "store": "Target",
+            "url": ["https://www.target.com/p/nintendo-switch-with-neon-blue-and-neon-red-joy-con/-/A-77464001",
+                    "https://www.target.com/p/nintendo-switch-with-gray-joy-con/-/A-77464002"],
+            "locations": [[],[]],
+            "availability": [False,False]
+        },
+        {
+            "store": "Best Buy",
+            "url": ["https://www.bestbuy.com/site/nintendo-switch-32gb-console-neon-red-neon-blue-joy-con/6364255.p?skuId=6364255",
+                    "https://www.bestbuy.com/site/nintendo-switch-32gb-console-gray-joy-con/6364253.p?skuId=6364253"],
+            "locations": [[],[]],
+            "availability": [False,False]
+        }
+    ]
+    switch_avail[1] = check_bestBuy(self, switch_avail[1])
+    switch_avail[0] = check_target(self,switch_avail[0])
     summary_msg = "Nintendo Switch Locations: \n"
-    if at_bestBuy:
-        summary_msg += "BestBuy: It's available! Check website! \n"
-    else:
-        summary_msg += "BestBuy: Unavailable :( \n"
 
-    if at_target:
-        summary_msg += "Target: It's available at these locations: \n"
-        for x in target_list:
-            summary_msg += x['store_name'] + ": " + x['miles'] + "\n"
-    else:
-        summary_msg += "Target: Unavailable in the nearest 20 miles :("
+    for x in switch_avail:
+        if x['availability'][0] or x['availability'][1]:
+            if x['availability'][0] and x['availability'][1]:
+                summary_msg += x['store'] + " either of both colors at these locations:\n"
+                for y in range(2):
+                    for loc in x['locations'][y]:
+                        summary_msg += loc['store_name'] + ": " + loc['miles'] + "\n"
+            elif x['availability'][0]:
+                summary_msg += x['store'] + " has the red and blue switch at these locations:\n"
+                for loc in x['locations'][0]:
+                    summary_msg += loc['store_name'] + ": " + loc['miles'] + "\n"
+            elif x['availability'][1]:
+                summary_msg += x['store'] + " has the grey switch at these locations:\n"
+                for loc in x['locations'][1]:
+                    summary_msg += loc['store_name'] + ": " + loc['miles'] + "\n"
+        else:
+            summary_msg += x['store'] + " doesn't have any switches :(\n"
+
+
+    # summary_msg = "Nintendo Switch Locations: \n"
+    # if at_bestBuy:
+    #     summary_msg += "BestBuy: It's available! Check website! \n"
+    # else:
+    #     summary_msg += "BestBuy: Unavailable :( \n"
+    #
+    # if at_target:
+    #     summary_msg += "Target: It's available at these locations: \n"
+    #     for x in target_list:
+    #         summary_msg += x['store_name'] + ": " + x['miles'] + "\n"
+    # else:
+    #     summary_msg += "Target: Unavailable in the nearest 20 miles :("
 
     send_msg(summary_msg)
 
