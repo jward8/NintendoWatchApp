@@ -1,12 +1,19 @@
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from twilio.rest import Client
-
+import tkinter as tk
+from tkinter import Text
+import os
 
 class nintendoWatch:
     def __init__(self):
-        self.driver = webdriver.Chrome('C:\\Users\\JackMichael\\Documents\\Coding\\NintendoWatchApp\\src\\chromedriver')
+        chrome_options = Options()  
+        chrome_options.add_argument("--headless")
+        chrome_options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+        self.driver = webdriver.Chrome(executable_path='C:\\Users\\JackMichael\\Documents\\Coding\\NintendoWatchApp\\src\\chromedriver',
+        options=chrome_options)
         sleep(2)
 
 
@@ -19,7 +26,7 @@ def send_msg(message):
         .create(
         body=message,
         from_='+12029521329',
-        to='+16085142318'
+        to='+14147952004'
     )
 
 
@@ -117,22 +124,34 @@ def summarize(self):
         else:
             summary_msg += x['store'] + " doesn't have any switches :(\n"
 
-
-    # summary_msg = "Nintendo Switch Locations: \n"
-    # if at_bestBuy:
-    #     summary_msg += "BestBuy: It's available! Check website! \n"
-    # else:
-    #     summary_msg += "BestBuy: Unavailable :( \n"
-    #
-    # if at_target:
-    #     summary_msg += "Target: It's available at these locations: \n"
-    #     for x in target_list:
-    #         summary_msg += x['store_name'] + ": " + x['miles'] + "\n"
-    # else:
-    #     summary_msg += "Target: Unavailable in the nearest 20 miles :("
-
     send_msg(summary_msg)
 
 
-checker = nintendoWatch()
-summarize(checker)
+def setup_gui():
+    root = tk.Tk()
+    canvas = tk.Canvas(root, height=400, width=800, bg="#ffffff")
+    canvas.pack()
+
+    canvas.create_text(400,50,text="Nintendo Switch Watcher", font=("Helvetica",24,"bold"))
+
+    left_frame = tk.Frame(root, bg="#00c3e3")
+    left_frame.place(relwidth=.2,relheight=1)
+
+    right_frame = tk.Frame(root, bg='#ff4554')
+    right_frame.place(relwidth=.2,relheight=1,relx=.8)
+
+    run_app = tk.Button(root, text="Run Notifier", padx=10, pady=5, fg="white", bg='#00c3e3', 
+        command=start_up)
+    run_app.pack()
+
+    add_notifee = tk.Button(root, text="Add Notifiee", padx=10, pady=5,fg='white', bg='#ff4554')
+    add_notifee.pack()
+
+    root.mainloop()
+
+def start_up():
+    checker = nintendoWatch()
+    summarize(checker)
+
+if __name__ == '__main__':
+    setup_gui()
