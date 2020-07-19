@@ -6,6 +6,7 @@ from twilio.rest import Client
 import tkinter as tk
 from tkinter import Text
 import os
+import schedule
 
 class nintendoWatch:
     def __init__(self):
@@ -85,7 +86,8 @@ def check_target(self, switch_target):
     return switch_target
 
 
-def summarize(self):
+def summarize():
+    checker = nintendoWatch()
     switch_avail = [
         {
             "store": "Target",
@@ -102,8 +104,8 @@ def summarize(self):
             "availability": [False,False]
         }
     ]
-    switch_avail[1] = check_bestBuy(self, switch_avail[1])
-    switch_avail[0] = check_target(self,switch_avail[0])
+    switch_avail[1] = check_bestBuy(checker, switch_avail[1])
+    switch_avail[0] = check_target(checker,switch_avail[0])
     summary_msg = "Nintendo Switch Locations: \n"
 
     for x in switch_avail:
@@ -150,8 +152,12 @@ def setup_gui():
     root.mainloop()
 
 def start_up():
-    checker = nintendoWatch()
-    summarize(checker)
+    schedule.every().hour.do(summarize)
+
+    while True:
+        schedule.run_pending()
+        sleep(1)
+    
 
 if __name__ == '__main__':
     setup_gui()
