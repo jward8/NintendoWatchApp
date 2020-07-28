@@ -6,15 +6,14 @@ from twilio.rest import Client
 import tkinter as tk
 from tkinter import Text
 import os
-import schedule
+import sched
 
 class nintendoWatch:
     def __init__(self):
-        chrome_options = Options()  
-        chrome_options.add_argument("--headless")
-        chrome_options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-        self.driver = webdriver.Chrome(executable_path='C:\\Users\\JackMichael\\Documents\\Coding\\NintendoWatchApp\\src\\chromedriver',
-        options=chrome_options)
+        # chrome_options = Options()  
+        # chrome_options.add_argument("--headless")
+        # chrome_options.binary_location = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+        self.driver = webdriver.Chrome('C:\\Users\\JackMichael\\Documents\\Coding\\NintendoWatchApp\\src\\chromedriver')
         sleep(2)
 
 
@@ -52,10 +51,10 @@ def check_target(self, switch_target):
 
     for x in range(2):
         self.driver.get(switch_target["url"][x])
-        sleep(3)
+        sleep(2)
         switch_location = self.driver.find_element_by_xpath("//button[@data-test='fiatsButton']")
         self.driver.execute_script("arguments[0].click()", switch_location)
-        sleep(1)
+        sleep(2)
         self.driver.find_element_by_xpath("//a[@data-test='storeSearchLink']") \
             .click()
         sleep(2)
@@ -68,15 +67,17 @@ def check_target(self, switch_target):
 
         self.driver.find_element_by_xpath("//button[@data-test='fiatsUpdateLocationSubmitButton']")\
             .click()
-        sleep(1)
+        sleep(2)
         self.driver.find_element_by_class_name('switch-track') \
             .click()
-        sleep(1)
+        sleep(2)
         locations = self.driver.find_elements_by_xpath("//div[@data-test='storeAvailabilityStoreCard']")
 
         for loc in locations:
             text = str.splitlines(loc.text)
             if int(text[1].split()[0]) < 20:
+                if switch_target['availability'][x] == False:
+                    switch_target['availability'][x] = True
                 entry = {
                     'store_name': text[0],
                     'miles': text[1]
@@ -143,7 +144,7 @@ def setup_gui():
     right_frame.place(relwidth=.2,relheight=1,relx=.8)
 
     run_app = tk.Button(root, text="Run Notifier", padx=10, pady=5, fg="white", bg='#00c3e3', 
-        command=start_up)
+        command=summarize)
     run_app.pack()
 
     add_notifee = tk.Button(root, text="Add Notifiee", padx=10, pady=5,fg='white', bg='#ff4554')
@@ -152,12 +153,9 @@ def setup_gui():
     root.mainloop()
 
 def start_up():
-    schedule.every().hour.do(summarize)
-
-    while True:
-        schedule.run_pending()
-        sleep(1)
+    return null #FIXME
     
+
 
 if __name__ == '__main__':
     setup_gui()
